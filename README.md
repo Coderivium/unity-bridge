@@ -25,3 +25,5 @@ Now your can call any public method of this class by invoking CRUnityBridge meth
                                    returnValueType:NO];
                                    
 Where ScriptName is actual name of your Unity scipt.
+
+Full API reference is available at http://coderivium.github.io/unity-bridge
