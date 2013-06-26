@@ -1,7 +1,7 @@
 //
-//  CRNSString+ConversionToChar.h
+//  CRUnityBridge.h
 //
-//  Created by Dmitry Utenkov on 24.05.12.
+//  Created by Igor Ishchenko on 22.06.12.
 //
 //  Copyright (C) 2013 Coderivium
 //
@@ -12,28 +12,29 @@
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#import <Foundation/Foundation.h>
+#include "mono_bindings.h"
 
-#import "CRNSString+ConversionToChar.h"
+@interface CRUnityBridge : NSObject
 
-@implementation NSString (ConversionToChar)
++(CRUnityBridge*)sharedInstance;
 
-- (char *)convertToChar  {
-    char *charString = (char *)"\0";
-    
-    if (self != nil) {
-        charString = (char *)malloc([self lengthOfBytesUsingEncoding:NSUTF8StringEncoding]+1);
-        [self getCString:charString 
-                 maxLength:[self lengthOfBytesUsingEncoding:NSUTF8StringEncoding]+1 
-                  encoding:NSUTF8StringEncoding];
-    }
-    
-    return charString;
-}
+- (void)registerObject:(MonoObject)theObject forName:(NSString*)theName;
 
-- (MonoString*)monoString {
-    char *cString = [self convertToChar];
-    
-    return mono_string_new(mono_domain_get(), cString);
-}
+- (void*)invokeMethod:(NSString*)theMethodName 
+             onObject:(NSString*)theObjectName 
+                 args:(void**)theArgs 
+      returnValueType:(BOOL)isValueType;
+
+- (NSString*)invokeStringMethod:(NSString *)theMethodName 
+                       onObject:(NSString *)theObjectName 
+                           args:(void**)theArgs;
+
+- (NSArray*)invokeStringArrayMethod:(NSString *)theMethodName 
+                           onObject:(NSString *)theObjectName 
+                               args:(void**)theArgs;
 
 @end
+
+// interface for accessing bridge from Unity
+void register_object(MonoObject object, char *name);
